@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELITE FACTORY JL - Sistema de Gestión & Web</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandGreen: '#00FF66',
+                        brandGreenHover: '#00CC52',
+                        darkBg: '#08090B',
+                        cardBg: '#101216',
+                        cardBorder: '#1C2029',
+                        accentRed: '#3B181A',
+                        textRed: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-darkBg text-gray-100 font-sans antialiased min-h-screen flex flex-col justify-between relative">
+
+    <!-- BOTÓN FLOTANTE WHATSAPP -->
+    <a href="https://wa.me/5491112345678?text=Hola!%20Tengo%20una%20consulta%20sobre%20Elite%20Factory%20JL" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       title="Consultar por WhatsApp"
+       class="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20ba5a] text-white p-3.5 rounded-full shadow-2xl shadow-green-500/30 flex items-center justify-center transition-transform hover:scale-110 active:scale-95 group">
+        <i data-lucide="message-circle" class="w-7 h-7 fill-white text-[#25D366]"></i>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-xs font-black tracking-wider uppercase ml-0 group-hover:ml-2">WhatsApp Directo</span>
+    </a>
+
+    <!-- HEADER DE NAVEGACIÓN -->
+    <header class="bg-cardBg/90 backdrop-blur-md border-b border-cardBorder sticky top-0 z-40 px-5 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('publica')">
+                <div class="w-9 h-9 rounded-lg bg-cardBorder border border-brandGreen/50 flex items-center justify-center font-black text-brandGreen text-xs tracking-tighter shadow-sm shadow-brandGreen/20">
+                    <i data-lucide="zap" class="w-5 h-5 fill-brandGreen text-brandGreen"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-black tracking-widest uppercase text-white leading-none">ELITE</h1>
+                    <p class="text-[9px] text-gray-400 font-bold tracking-widest uppercase mt-0.5">FACTORY JL</p>
+                </div>
+            </div>
+
+            <nav class="hidden lg:flex items-center gap-6 text-xs font-bold text-gray-300">
+                <a href="#nosotros" onclick="switchView('publica')" class="hover:text-brandGreen transition">NOSOTROS</a>
+                <a href="#profesores" onclick="switchView('publica')" class="hover:text-brandGreen transition">PROFESORES</a>
+                <a href="#planes" onclick="switchView('publica')" class="hover:text-brandGreen transition">PLANES</a>
+                <a href="#contacto" onclick="switchView('publica')" class="hover:text-brandGreen transition">CONTACTO & REDES</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <div id="user-badge" class="hidden items-center gap-2 bg-darkBg border border-cardBorder px-3 py-1.5 rounded-xl text-xs">
+                    <span id="user-role-label" class="text-brandGreen font-extrabold uppercase"></span>
+                    <button onclick="cerrarSesion()" class="text-gray-400 hover:text-red-400 ml-1" title="Cerrar sesión">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <button id="btn-ingresar" onclick="toggleModalLogin()" class="bg-brandGreen hover:bg-brandGreenHover text-black px-3.5 py-1.5 rounded-xl flex flex-col items-center justify-center transition shadow-lg shadow-brandGreen/20 font-black">
+                    <span class="text-[8px] font-black tracking-widest uppercase opacity-80 leading-tight">MY FACTORY</span>
+                    <span class="text-[11px] font-black leading-tight flex items-center gap-1">
+                        <i data-lucide="user" class="w-3 h-3"></i> Inicio de sesión
+                    </span>
+                </button>
+            </div>
+
+            <button onclick="toggleMenu()" class="md:hidden text-white p-1 focus:outline-none">
+                <i data-lucide="menu" class="w-7 h-7"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MENÚ MOBILE -->
+    <div id="mobile-menu" class="fixed inset-0 bg-darkBg z-50 flex flex-col justify-between p-6 hidden">
+        <div>
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-cardBorder border border-brandGreen/50 flex items-center justify-center font-black text-brandGreen text-xs">
+                        <i data-lucide="zap" class="w-4 h-4 fill-brandGreen text-brandGreen"></i>
+                    </div>
+                    <span class="text-xs font-black tracking-widest text-white uppercase">ELITE FACTORY JL</span>
+                </div>
+                <button onclick="toggleMenu()" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-7 h-7"></i>
+                </button>
+            </div>
+
+            <nav class="space-y-4 text-sm font-semibold text-gray-300">
+                <a href="#nosotros" onclick="toggleMenu(); switchView('publica');" class="block hover:text-brandGreen">Nosotros</a>
+                <a href="#profesores" onclick="toggleMenu(); switchView('publica');" class="block hover:text-brandGreen">Profesores</a>
+                <a href="#planes" onclick="toggleMenu(); switchView('publica');" class="block hover:text-brandGreen">Planes</a>
+                <a href="#contacto" onclick="toggleMenu(); switchView('publica');" class="block hover:text-brandGreen">Contacto & Redes</a>
+            </nav>
+        </div>
+
+        <button onclick="toggleMenu(); toggleModalLogin();" class="w-full bg-brandGreen text-black font-extrabold py-3.5 rounded-xl flex items-center justify-center gap-2 uppercase text-xs tracking-wider">
+            <i data-lucide="user" class="w-4 h-4"></i> Inicio de sesión (My Factory)
+        </button>
+    </div>
+
+    <!-- ==========================================
+         1. LANDING PAGE PÚBLICA
+         ========================================== -->
+    <main id="panel-publica" class="flex-1">
+        <section class="px-6 py-16 max-w-4xl mx-auto text-center space-y-6">
+            <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-brandGreen/40 bg-brandGreen/10 text-brandGreen text-xs font-black tracking-widest uppercase shadow-sm shadow-brandGreen/20">
+                <span class="w-2 h-2 rounded-full bg-brandGreen animate-pulse"></span> ELITE FACTORY JL
+            </span>
+            
+            <h2 class="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white leading-none">
+                EL ESTÁNDAR QUE DECIDISTE <span class="text-brandGreen block mt-1 drop-shadow-[0_0_12px_rgba(0,255,102,0.3)]">ALCANZAR</span>
+            </h2>
+
+            <p class="text-gray-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+                Fuerza, rendimiento y evolución. Un espacio moderno donde cada entrenamiento se planifica, se mide y se supera.
+            </p>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2 max-w-md mx-auto">
+                <a href="#planes" class="w-full sm:w-auto bg-brandGreen hover:bg-brandGreenHover text-black font-black px-6 py-4 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider transition shadow-lg shadow-brandGreen/20">
+                    VER PLANES <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                <a href="#contacto" class="w-full sm:w-auto bg-transparent border border-cardBorder hover:border-brandGreen text-white font-extrabold px-6 py-4 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider transition">
+                    <i data-lucide="phone-call" class="w-4 h-4"></i> CONTACTO
+                </a>
+            </div>
+        </section>
+
+        <!-- NOSOTROS -->
+        <section id="nosotros" class="border-t border-cardBorder bg-cardBg/40 py-16 px-6">
+            <div class="max-w-4xl mx-auto space-y-4 text-center">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brandGreen/30 bg-brandGreen/10 text-brandGreen text-xs font-bold tracking-widest uppercase">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> NOSOTROS
+                </span>
+                <h3 class="text-3xl font-black uppercase leading-tight text-white">
+                    NO SOMOS UN GIMNASIO, <span class="text-brandGreen">SOMOS TU MÉTODO</span>
+                </h3>
+                <p class="text-gray-400 text-sm leading-relaxed max-w-2xl mx-auto">
+                    ELITE nació para quienes entienden que el resultado no es suerte: es planificación, disciplina y constancia. Un espacio pensado para entrenar en serio con equipamiento de nivel profesional.
+                </p>
+            </div>
+        </section>
+
+        <!-- PROFESORES -->
+        <section id="profesores" class="max-w-6xl mx-auto px-6 py-16 border-t border-cardBorder">
+            <div class="text-center mb-10">
+                <span class="text-xs text-brandGreen font-bold tracking-widest uppercase">STAFF TÉCNICO</span>
+                <h3 class="text-2xl font-black uppercase text-white mt-1">Nuestros Profesores</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto" id="landing-profesores-container">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </section>
+
+        <!-- PLANES -->
+        <section id="planes" class="max-w-6xl mx-auto px-6 py-16 border-t border-cardBorder">
+            <div class="text-center mb-10">
+                <span class="text-xs text-brandGreen font-bold tracking-widest uppercase">MEMBRESÍAS</span>
+                <h3 class="text-2xl font-black uppercase text-white mt-1">Planes y Tarifas</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-extrabold text-white uppercase text-base">Plan Esencial</h4>
+                        <p class="text-3xl font-black text-brandGreen my-3">$ 25.000 <span class="text-xs text-gray-400 font-normal">/mes</span></p>
+                        <ul class="text-xs text-gray-300 space-y-2.5 mb-6">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brandGreen"></i> Acceso libre a musculación</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brandGreen"></i> Rutina digital estándar</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/5491112345678?text=Hola!%20Quiero%20sumarme%20al%20Plan%20Esencial" target="_blank" class="w-full bg-darkBg border border-cardBorder text-white text-center font-bold text-xs py-3.5 rounded-xl hover:border-brandGreen transition">Elegir Plan</a>
+                </div>
+
+                <div class="bg-cardBg border-2 border-brandGreen p-6 rounded-2xl flex flex-col justify-between relative shadow-xl shadow-brandGreen/10">
+                    <span class="absolute -top-3 right-6 bg-brandGreen text-black text-[10px] font-black px-3 py-0.5 rounded-full uppercase">MÁS ELEGIDO</span>
+                    <div>
+                        <h4 class="font-extrabold text-white uppercase text-base">Plan Rendimiento</h4>
+                        <p class="text-3xl font-black text-brandGreen my-3">$ 35.000 <span class="text-xs text-gray-400 font-normal">/mes</span></p>
+                        <ul class="text-xs text-gray-300 space-y-2.5 mb-6">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brandGreen"></i> Acceso libre total</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brandGreen"></i> Rutinas personalizadas</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brandGreen"></i> Seguimiento de PRs y 1RM</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/5491112345678?text=Hola!%20Quiero%20sumarme%20al%20Plan%20Rendimiento" target="_blank" class="w-full bg-brandGreen text-black text-center font-black text-xs py-3.5 rounded-xl hover:bg-brandGreenHover transition shadow-md shadow-brandGreen/20">Elegir Plan</a>
+                </div>
+
+                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-extrabold text-white uppercase text-base">Plan Élite VIP</h4>
+                        <p class="text-3xl font-black text-brandGreen my-3">$ 45.000 <span class="text-xs text-gray-400 font-normal">/mes</span></p>
+                        <ul class="text-xs text-gray-300 space-y-2.5 mb-6">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brandGreen"></i> Todo lo del Plan Rendimiento</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brandGreen"></i> Corrección técnica presencial</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/5491112345678?text=Hola!%20Quiero%20sumarme%20al%20Plan%20Elite" target="_blank" class="w-full bg-darkBg border border-cardBorder text-white text-center font-bold text-xs py-3.5 rounded-xl hover:border-brandGreen transition">Elegir Plan</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACTO -->
+        <section id="contacto" class="bg-cardBg border-t border-cardBorder py-16 px-6">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="text-center space-y-2">
+                    <span class="text-xs text-brandGreen font-bold uppercase tracking-widest">UBICACIÓN & CANALES DE CONTACTO</span>
+                    <h3 class="text-2xl font-black text-white uppercase">Sumate a Elite Factory JL</h3>
+                    <p class="text-xs text-gray-400">Av. Principal 1234, Buenos Aires | Lunes a Viernes: 07:00 a 22:00 hs — Sábados: 09:00 a 18:00 hs</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                    <a href="https://wa.me/5491112345678?text=Hola!%20Quiero%20más%20información%20sobre%20el%20gimnasio" target="_blank" class="bg-darkBg border border-cardBorder hover:border-[#25D366] p-5 rounded-2xl flex items-center gap-4 transition group">
+                        <div class="w-12 h-12 rounded-xl bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center text-[#25D366] group-hover:scale-110 transition-transform">
+                            <i data-lucide="message-square" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase block">Atención Inmediata</span>
+                            <h4 class="text-sm font-extrabold text-white group-hover:text-[#25D366] transition">WhatsApp Oficial</h4>
+                            <p class="text-xs text-gray-400">+54 9 11 1234-5678</p>
+                        </div>
+                    </a>
+
+                    <a href="https://instagram.com/elitefactoryjl" target="_blank" class="bg-darkBg border border-cardBorder hover:border-pink-500 p-5 rounded-2xl flex items-center gap-4 transition group">
+                        <div class="w-12 h-12 rounded-xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="instagram" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase block">Comunidad & Novedades</span>
+                            <h4 class="text-sm font-extrabold text-white group-hover:text-pink-400 transition">Instagram</h4>
+                            <p class="text-xs text-gray-400">@elitefactoryjl</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==========================================
+         2. PANEL DEL DUEÑO (ADMINISTRADOR TOTAL)
+         ========================================== -->
+    <main id="panel-dueno" class="max-w-5xl mx-auto px-5 py-6 hidden flex-1 w-full space-y-6">
+        
+        <div class="flex justify-between items-center pb-2">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded bg-cardBorder flex items-center justify-center text-brandGreen">
+                    <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                </div>
+                <span class="text-sm font-bold text-white tracking-wide">Panel de Control Total (Dueño del Gimnasio)</span>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-brandGreen/20 border border-brandGreen/40 flex items-center justify-center text-brandGreen font-black text-xs shadow-sm shadow-brandGreen/20">
+                D
+            </div>
+        </div>
+
+        <!-- METRICAS DE CABECERA -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-cardBg border border-cardBorder p-4 rounded-2xl flex flex-col justify-between h-28">
+                <span class="text-xs text-gray-400 font-semibold">Alumnos totales</span>
+                <span class="text-2xl font-black text-white block" id="stat-totales">0</span>
+            </div>
+            <div class="bg-cardBg border border-cardBorder p-4 rounded-2xl flex flex-col justify-between h-28">
+                <span class="text-xs text-gray-400 font-semibold">Al día</span>
+                <span class="text-2xl font-black text-brandGreen block" id="stat-aldia">0</span>
+            </div>
+            <div class="bg-cardBg border border-cardBorder p-4 rounded-2xl flex flex-col justify-between h-28">
+                <span class="text-xs text-gray-400 font-semibold">Cuotas Pendientes</span>
+                <span class="text-2xl font-black text-amber-400 block" id="stat-pendientes">0</span>
+            </div>
+            <div class="bg-cardBg border border-cardBorder p-4 rounded-2xl flex flex-col justify-between h-28">
+                <span class="text-xs text-gray-400 font-semibold">Vencidos / Morosos</span>
+                <span class="text-2xl font-black text-textRed block" id="stat-morosos">0</span>
+            </div>
+        </div>
+
+        <!-- BANCO Y BIBLIOTECA GENERAL DE EJERCICIOS -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-5 space-y-4">
+            <div class="flex justify-between items-center flex-wrap gap-2 border-b border-cardBorder pb-3">
+                <div>
+                    <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                        <i data-lucide="database" class="w-4 h-4 text-brandGreen"></i> Banco Oficial de Ejercicios
+                    </h3>
+                    <p class="text-[11px] text-gray-400">Gestioná la biblioteca de ejercicios que utilizarán los profesores para armar las rutinas.</p>
+                </div>
+                <button onclick="toggleModalNuevoEjercicioBanco()" class="bg-brandGreen text-black font-black text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 hover:bg-brandGreenHover transition shadow-md shadow-brandGreen/10 uppercase">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Ejercicio
+                </button>
+            </div>
+
+            <!-- FILTROS CRUZADOS DEL BANCO -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-darkBg p-3 rounded-xl border border-cardBorder text-xs">
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1 uppercase">Grupo Muscular</label>
+                    <select id="filtro-banco-musculo" onchange="renderizarBancoEjercicios()" class="w-full bg-cardBg border border-cardBorder rounded-lg p-2 text-white font-bold">
+                        <option value="todos">Todos los Grupos Musculares</option>
+                        <option value="Pecho">Pecho</option>
+                        <option value="Espalda">Espalda</option>
+                        <option value="Hombros">Hombros</option>
+                        <option value="Piernas">Piernas</option>
+                        <option value="Brazos">Brazos (Bíceps / Tríceps)</option>
+                        <option value="Abdomen">Abdomen / Core</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1 uppercase">Máquina / Equipamiento</label>
+                    <select id="filtro-banco-maquina" onchange="renderizarBancoEjercicios()" class="w-full bg-cardBg border border-cardBorder rounded-lg p-2 text-white font-bold">
+                        <option value="todos">Todo tipo de Equipamiento</option>
+                        <option value="Poleas">Poleas / Doble Polea</option>
+                        <option value="Barra">Barra / Discos</option>
+                        <option value="Mancuernas">Mancuernas</option>
+                        <option value="Máquina Guiada">Máquina Guiada / Smith</option>
+                        <option value="Peso Corporal">Peso Corporal / Calistenia</option>
+                        <option value="Banco">Banco Ajustable / Plano</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1 uppercase">Buscar por Nombre</label>
+                    <input type="text" id="filtro-banco-nombre" oninput="renderizarBancoEjercicios()" placeholder="Ej: Jalón al pecho..." class="w-full bg-cardBg border border-cardBorder rounded-lg p-2 text-white">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-cardBorder text-gray-400 uppercase text-[10px]">
+                            <th class="pb-2">Ejercicio</th>
+                            <th class="pb-2">Grupo Muscular</th>
+                            <th class="pb-2">Máquina / Equipo</th>
+                            <th class="pb-2">Demo / Video</th>
+                            <th class="pb-2 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-banco-ejercicios-body" class="divide-y divide-cardBorder/50 text-gray-300">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- BALANCE Y FINANZAS -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-5 space-y-4">
+            <div class="flex justify-between items-center flex-wrap gap-2">
+                <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                    <i data-lucide="dollar-sign" class="w-4 h-4 text-brandGreen"></i> Balance Financiero & Caja
+                </h3>
+                <span class="text-xs font-black text-brandGreen bg-brandGreen/10 border border-brandGreen/30 px-3 py-1 rounded-lg" id="caja-total-balance">
+                    Total en Caja: $0
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <form onsubmit="registrarTransaccionFinanciera(event)" class="bg-darkBg border border-cardBorder p-4 rounded-xl space-y-3">
+                    <span class="text-xs font-bold text-gray-300 block">Registrar Movimiento Financiero</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="finanza-tipo" class="bg-cardBg border border-cardBorder rounded-lg p-2 text-xs text-white font-bold">
+                            <option value="ingreso">➕ Ingreso</option>
+                            <option value="gasto">➖ Gasto</option>
+                        </select>
+                        <input type="number" id="finanza-monto" placeholder="Monto $" required class="bg-cardBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                    </div>
+                    <input type="text" id="finanza-concepto" placeholder="Concepto (ej. Pago cuota, Mantenimiento)" required class="w-full bg-cardBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                    <button type="submit" class="w-full bg-brandGreen text-black font-black text-xs py-2 rounded-lg hover:bg-brandGreenHover transition">
+                        Cargar Movimiento
+                    </button>
+                </form>
+
+                <div class="bg-darkBg border border-cardBorder p-4 rounded-xl space-y-2 overflow-y-auto max-h-48">
+                    <span class="text-xs font-bold text-gray-400 block mb-2">Últimos Movimientos</span>
+                    <div id="lista-movimientos-finanzas" class="space-y-1.5 text-xs"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROL DE ALUMNOS (DUEÑO) -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-5 space-y-4">
+            <div class="flex justify-between items-center flex-wrap gap-2">
+                <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                    <i data-lucide="users" class="w-4 h-4 text-brandGreen"></i> Control Total de Alumnos
+                </h3>
+                <button onclick="toggleModalNuevoAlumno()" class="bg-brandGreen text-black text-xs font-black px-3.5 py-2 rounded-lg flex items-center gap-1 hover:bg-brandGreenHover transition">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Sumar Alumno
+                </button>
+            </div>
+
+            <!-- FILTROS DE ALUMNOS DUEÑO -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 bg-darkBg p-3 rounded-xl border border-cardBorder text-xs">
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Orden Alfabético</label>
+                    <select id="filtro-orden-dueno" onchange="renderizarPanelDueno()" class="w-full bg-cardBg border border-cardBorder rounded p-1.5 text-white">
+                        <option value="az">A - Z</option>
+                        <option value="za">Z - A</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Estado Cuota</label>
+                    <select id="filtro-cuota-dueno" onchange="renderizarPanelDueno()" class="w-full bg-cardBg border border-cardBorder rounded p-1.5 text-white">
+                        <option value="todos">Todos</option>
+                        <option value="Al día">Al día</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Vencida">Vencida</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Filtrar por Edad</label>
+                    <select id="filtro-edad-dueno" onchange="renderizarPanelDueno()" class="w-full bg-cardBg border border-cardBorder rounded p-1.5 text-white">
+                        <option value="todos">Todas las edades</option>
+                        <option value="sub20">&lt; 20 años</option>
+                        <option value="20_30">20 a 30 años</option>
+                        <option value="mas30">&gt; 30 años</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Mes Nacimiento</label>
+                    <select id="filtro-mes-dueno" onchange="renderizarPanelDueno()" class="w-full bg-cardBg border border-cardBorder rounded p-1.5 text-white">
+                        <option value="todos">Todos los meses</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-cardBorder text-gray-400 uppercase text-[10px]">
+                            <th class="pb-2">Alumno</th>
+                            <th class="pb-2">Usuario / Pass</th>
+                            <th class="pb-2">F. Nac. / Edad</th>
+                            <th class="pb-2">Profe Asignado</th>
+                            <th class="pb-2">Estado Cuota</th>
+                            <th class="pb-2 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-alumnos-body-dueno" class="divide-y divide-cardBorder/50 text-gray-300"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PROFESORES & INVENTARIO -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-cardBg border border-cardBorder rounded-2xl p-5 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                        <i data-lucide="user-check" class="w-4 h-4 text-brandGreen"></i> Staff de Profesores
+                    </h3>
+                    <button onclick="toggleModalNuevoProfesor()" class="text-brandGreen hover:underline text-xs font-bold">+ Agregar Profe</button>
+                </div>
+                <!-- LISTA DE PROFESORES CON BOTÓN DE ELIMINACIÓN/BAJA -->
+                <div class="space-y-2" id="lista-profesores-dueno"></div>
+            </div>
+
+            <div class="bg-cardBg border border-cardBorder rounded-2xl p-5 space-y-4">
+                <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                    <i data-lucide="clipboard" class="w-4 h-4 text-brandGreen"></i> Anote de Inventario
+                </h3>
+                <form onsubmit="agregarInventario(event)" class="flex gap-2">
+                    <input type="text" id="inventario-item" placeholder="Ej. Mancuernas 20kg" required class="flex-1 bg-darkBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                    <button type="submit" class="bg-brandGreen text-black font-black px-3 py-2 rounded-lg text-xs">Añadir</button>
+                </form>
+                <div id="lista-inventario" class="space-y-1.5 text-xs max-h-36 overflow-y-auto"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==========================================
+         3. VISTA PRIVADA: PANEL DEL PROFESOR
+         ========================================== -->
+    <main id="panel-profesor" class="max-w-4xl mx-auto px-5 py-6 hidden flex-1 w-full space-y-6">
+        
+        <div class="flex justify-between items-center pb-2">
+            <div class="flex items-center gap-2">
+                <i data-lucide="dumbbell" class="w-4 h-4 text-brandGreen"></i>
+                <span class="text-sm font-bold text-white tracking-wide">Panel Técnico del Instructor</span>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-brandGreen/20 border border-brandGreen/40 flex items-center justify-center text-brandGreen font-black text-xs" id="profe-avatar-iniciales">
+                JL
+            </div>
+        </div>
+
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 flex justify-between items-center flex-wrap gap-4">
+            <div>
+                <h2 class="text-2xl font-black text-white uppercase" id="profe-nombre-display">Prof. Javier López</h2>
+                <p class="text-xs text-gray-400 mt-1">Especialidad: <span class="text-brandGreen font-bold" id="profe-especialidad-display">Biomecánica & Hipertrofia</span></p>
+            </div>
+            <button onclick="toggleModalNuevoAlumno()" class="bg-brandGreen hover:bg-brandGreenHover text-black text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-2 uppercase shadow-md shadow-brandGreen/10">
+                <i data-lucide="user-plus" class="w-4 h-4"></i> + Registrar Alumno
+            </button>
+        </div>
+
+        <!-- LISTADO DE ALUMNOS Y FILTROS PROFESOR -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 space-y-4">
+            <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                <i data-lucide="users" class="w-4 h-4 text-brandGreen"></i> Mis Alumnos Asignados
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 bg-darkBg p-3 rounded-xl border border-cardBorder text-xs">
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Orden Alfabético</label>
+                    <select id="filtro-orden-profe" onchange="filtrarAlumnosProfesor()" class="w-full bg-cardBg border border-cardBorder rounded p-1.5 text-white">
+                        <option value="az">A - Z</option>
+                        <option value="za">Z - A</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Estado de Cuota</label>
+                    <select id="filtro-cuota-profe" onchange="filtrarAlumnosProfesor()" class="w-full bg-cardBg border border-cardBorder rounded p-1.5 text-white">
+                        <option value="todos">Todos</option>
+                        <option value="Al día">Al día</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Vencida">Vencida</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Edad</label>
+                    <select id="filtro-edad-profe" onchange="filtrarAlumnosProfesor()" class="w-full bg-cardBg border border-cardBorder rounded p-1.5 text-white">
+                        <option value="todos">Todas las edades</option>
+                        <option value="sub20">&lt; 20 años</option>
+                        <option value="20_30">20 a 30 años</option>
+                        <option value="mas30">&gt; 30 años</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Mes Nacimiento</label>
+                    <select id="filtro-mes-profe" onchange="filtrarAlumnosProfesor()" class="w-full bg-cardBg border border-cardBorder rounded p-1.5 text-white">
+                        <option value="todos">Todos los meses</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="alumnos-profesor-container"></div>
+        </div>
+
+        <!-- FICHA TÉCNICA Y MEDIDAS CORPORALES -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 space-y-4">
+            <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                <i data-lucide="activity" class="w-4 h-4 text-brandGreen"></i> Ficha Corporal & Medidas del Alumno
+            </h3>
+
+            <form onsubmit="guardarAnotacionYMedidasProfe(event)" class="space-y-4 bg-darkBg border border-cardBorder p-4 rounded-xl">
+                <div>
+                    <label class="block text-[11px] text-gray-400 font-bold mb-1">Seleccionar Alumno</label>
+                    <select id="anotacion-alumno-select" onchange="cargarFichaAlumnoProfe()" class="w-full bg-cardBg border border-cardBorder rounded-lg p-2.5 text-xs text-white">
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div class="bg-cardBg p-3 rounded-lg border border-cardBorder space-y-1">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase block">Objetivo Principal</span>
+                        <input type="text" id="ficha-objetivo" placeholder="Ej: Hipertrofia y fuerza" class="w-full bg-darkBg border border-cardBorder rounded p-1.5 text-xs text-white">
+                    </div>
+                    <div class="bg-cardBg p-3 rounded-lg border border-cardBorder space-y-1">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase block">Estado de Cuota</span>
+                        <span id="ficha-estado-cuota" class="font-black text-brandGreen uppercase text-xs block pt-1">AL DÍA</span>
+                    </div>
+                </div>
+
+                <div class="bg-cardBg p-4 rounded-xl border border-brandGreen/20 space-y-3">
+                    <span class="text-xs font-bold text-brandGreen uppercase block flex items-center gap-1.5">
+                        <i data-lucide="scale" class="w-4 h-4"></i> Actualizar Mediciones Corporales
+                    </span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">Peso (kg)</label>
+                            <input type="number" step="0.1" id="profe-input-peso" placeholder="78.5" class="w-full bg-darkBg border border-cardBorder rounded p-2 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">Altura (cm)</label>
+                            <input type="number" id="profe-input-altura" placeholder="175" class="w-full bg-darkBg border border-cardBorder rounded p-2 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">% Grasa</label>
+                            <input type="number" step="0.1" id="profe-input-grasa" placeholder="15.2" class="w-full bg-darkBg border border-cardBorder rounded p-2 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-gray-400 font-bold mb-1">% Masa Muscular</label>
+                            <input type="number" step="0.1" id="profe-input-musculo" placeholder="42.5" class="w-full bg-darkBg border border-cardBorder rounded p-2 text-xs text-white">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-[11px] text-amber-400 font-bold flex items-center gap-1">
+                        <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Anotaciones / Molestias / Lesiones
+                    </label>
+                    <textarea id="ficha-anotacion" rows="2" placeholder="Ej: Molestia en hombro. Evitar press pesado." class="w-full bg-cardBg border border-cardBorder rounded-lg p-2.5 text-xs text-white font-sans"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-brandGreen hover:bg-brandGreenHover text-black font-black text-xs py-2.5 rounded-xl transition uppercase">
+                    Guardar Cambios y Mediciones
+                </button>
+            </form>
+        </div>
+
+        <!-- ARMADOR DE RUTINAS CON FILTROS DEL BANCO -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 space-y-5">
+            <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                <i data-lucide="clipboard-list" class="w-4 h-4 text-brandGreen"></i> Armador Avanzado de Rutinas
+            </h3>
+
+            <form onsubmit="guardarRutinaProfe(event)" class="space-y-4 bg-darkBg border border-cardBorder p-4 rounded-xl">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] text-gray-400 font-bold mb-1">Seleccionar Alumno</label>
+                        <select id="rutina-alumno-select" class="w-full bg-cardBg border border-cardBorder rounded-lg p-2.5 text-xs text-white">
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] text-gray-400 font-bold mb-1">Día / Fecha Asignada</label>
+                        <input type="date" id="rutina-fecha-input" required class="w-full bg-cardBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] text-gray-400 font-bold mb-1">Nombre / Enfoque de la Sesión</label>
+                    <input type="text" id="rutina-enfoque" placeholder="Ej: Pecho & Hombros (Fuerza)" required class="w-full bg-cardBg border border-cardBorder rounded-lg p-2.5 text-xs text-white">
+                </div>
+
+                <!-- SELECCIÓN FILTRADA DEL BANCO -->
+                <div class="bg-cardBg border border-cardBorder p-3 rounded-xl space-y-3">
+                    <span class="text-xs font-bold text-brandGreen uppercase block">Seleccionar Ejercicio de la Biblioteca</span>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <select id="select-filtro-musculo-armador" onchange="actualizarSelectEjerciciosArmador()" class="bg-darkBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                            <option value="todos">Todos los músculos</option>
+                            <option value="Pecho">Pecho</option>
+                            <option value="Espalda">Espalda</option>
+                            <option value="Hombros">Hombros</option>
+                            <option value="Piernas">Piernas</option>
+                            <option value="Brazos">Brazos</option>
+                        </select>
+
+                        <select id="select-ejercicio-banco" class="bg-darkBg border border-cardBorder rounded-lg p-2 text-xs text-white font-bold">
+                        </select>
+                    </div>
+
+                    <input type="text" id="input-ejercicio-custom" placeholder="O escribir un ejercicio personalizado..." class="w-full bg-darkBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="input-series-reps" placeholder="Series x Reps (ej. 4x10)" class="bg-darkBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                        <input type="text" id="input-obs-ejercicio" placeholder="Observaciones de ejecución" class="bg-darkBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                    </div>
+
+                    <button type="button" onclick="agregarEjercicioAListaTemp()" class="w-full bg-cardBorder text-white font-bold text-xs py-2 rounded-lg transition flex items-center justify-center gap-1 hover:border-brandGreen">
+                        <i data-lucide="plus" class="w-4 h-4 text-brandGreen"></i> Agregar Ejercicio a la Sesión
+                    </button>
+                </div>
+
+                <div id="lista-ejercicios-temporales" class="space-y-2 min-h-[50px] bg-cardBg border border-cardBorder rounded-xl p-3">
+                    <p class="text-xs text-gray-500 text-center py-2" id="msg-sin-ejercicios">Sin ejercicios añadidos aún.</p>
+                </div>
+
+                <button type="submit" class="w-full bg-brandGreen text-black font-black text-xs py-3 rounded-xl hover:bg-brandGreenHover transition uppercase">
+                    Guardar y Publicar Rutina
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- ==========================================
+         4. VISTA PRIVADA: PANEL DEL ALUMNO
+         ========================================== -->
+    <main id="panel-alumno" class="max-w-4xl mx-auto px-5 py-6 hidden flex-1 w-full space-y-6">
+        
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 relative overflow-hidden">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-cardBorder">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-brandGreen/20 border-2 border-brandGreen flex items-center justify-center text-brandGreen font-black text-2xl shadow-lg shadow-brandGreen/20" id="alumno-avatar">
+                        LA
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-extrabold text-brandGreen uppercase tracking-widest bg-brandGreen/10 border border-brandGreen/30 px-2.5 py-0.5 rounded-full inline-block mb-1">
+                            ALUMNO ÉLITE
+                        </span>
+                        <h2 class="text-2xl font-black text-white uppercase tracking-tight" id="alumno-nombre-display">Lázaro Ángel Manuel</h2>
+                        <p class="text-xs text-gray-400 mt-0.5">
+                            Edad: <span class="text-white font-bold" id="alumno-edad-display">-- años</span> | 
+                            Plan: <span class="text-white font-bold" id="alumno-plan-display">Elite VIP</span> | 
+                            Profesor: <span class="text-brandGreen font-bold" id="alumno-profe-display">Javier López</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="w-full sm:w-auto bg-darkBg border border-cardBorder p-3 rounded-xl text-left sm:text-right" id="alumno-cuota-box">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Estado de Cuota</span>
+                    <div id="alumno-estado-badge-contenedor" class="mt-1"></div>
+                </div>
+            </div>
+
+            <div class="pt-3">
+                <div id="alerta-lesion-alumno" class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl text-xs flex items-start gap-2.5 text-amber-200">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                    <div>
+                        <span class="font-bold block uppercase text-[10px] text-amber-400">Observación de tu Profesor:</span>
+                        <span id="alumno-nota-medica">Sin observaciones médicas.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RUTINAS DEL ALUMNO (CON CHECKBOXES DE EJERCICIOS COMPLETADOS) -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center flex-wrap gap-2">
+                <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                    <i data-lucide="dumbbell" class="w-4 h-4 text-brandGreen"></i> Rutina & Lista de Ejercicios
+                </h3>
+
+                <div class="flex items-center gap-2">
+                    <label class="text-[11px] text-gray-400 font-bold">Seleccionar Fecha:</label>
+                    <select id="select-fecha-rutina-alumno" onchange="cambiarFechaRutinaAlumno()" class="bg-darkBg border border-cardBorder rounded-lg p-2 text-xs text-brandGreen font-bold">
+                    </select>
+                </div>
+            </div>
+
+            <div id="contenedor-rutina-fecha-seleccionada" class="space-y-3"></div>
+        </div>
+
+        <!-- RÉCORDS PERSONALES (PRs) -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center flex-wrap gap-2">
+                <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                    <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i> Mis Récords Personales (PRs & Peso Máximo)
+                </h3>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="prs-alumnos-container"></div>
+
+            <form onsubmit="guardarNuevoPR(event)" class="bg-darkBg border border-cardBorder p-4 rounded-xl flex flex-col sm:flex-row gap-2 items-center">
+                <input type="text" id="pr-ejercicio" placeholder="Ej: Press Banca, Sentadilla" required class="flex-1 bg-cardBg border border-cardBorder rounded-lg p-2 text-xs text-white w-full">
+                <input type="number" step="0.5" id="pr-peso" placeholder="Peso Max (kg)" required class="w-full sm:w-32 bg-cardBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                <button type="submit" class="w-full sm:w-auto bg-brandGreen text-black font-black px-4 py-2 rounded-lg text-xs uppercase shadow-md shadow-brandGreen/10">
+                    + Cargar PR
+                </button>
+            </form>
+        </div>
+
+        <!-- GENERADOR DE RECETAS -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                    <i data-lucide="utensils" class="w-4 h-4 text-brandGreen"></i> Generador de Recetas & Macros
+                </h3>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Objetivo Nutricional</label>
+                    <select id="receta-objetivo" class="w-full bg-darkBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                        <option value="ganar">Ganancia Muscular (Superávit)</option>
+                        <option value="perder">Definición (Deficit Calórico)</option>
+                        <option value="mantener">Mantenimiento & Salud</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Momento del día</label>
+                    <select id="receta-momento" class="w-full bg-darkBg border border-cardBorder rounded-lg p-2 text-xs text-white">
+                        <option value="desayuno">Desayuno / Merienda</option>
+                        <option value="almuerzo">Almuerzo / Cena</option>
+                        <option value="post_entreno">Post Entreno Rápido</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button onclick="generarRecetaSaludable()" class="w-full bg-brandGreen text-black font-black text-xs py-2 rounded-lg hover:bg-brandGreenHover transition uppercase shadow-md shadow-brandGreen/10">
+                        Generar Sugerencia
+                    </button>
+                </div>
+            </div>
+
+            <div id="resultado-receta" class="bg-darkBg border border-cardBorder p-4 rounded-xl hidden text-xs space-y-2"></div>
+        </div>
+
+        <!-- PROGRESO CORPORAL & CHART -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-cardBorder pb-4">
+                <div>
+                    <h3 class="text-sm font-extrabold text-white uppercase flex items-center gap-2">
+                        <i data-lucide="activity" class="w-4 h-4 text-brandGreen"></i> Mi Progreso Corporal Evolutivo
+                    </h3>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                <div class="bg-darkBg border border-cardBorder p-3 rounded-xl">
+                    <span class="text-[10px] text-gray-400 font-bold block uppercase">Peso Actual</span>
+                    <span class="text-lg font-black text-white" id="stat-peso-actual">-- kg</span>
+                </div>
+                <div class="bg-darkBg border border-cardBorder p-3 rounded-xl">
+                    <span class="text-[10px] text-gray-400 font-bold block uppercase">Altura</span>
+                    <span class="text-lg font-black text-white" id="stat-altura-actual">-- cm</span>
+                </div>
+                <div class="bg-darkBg border border-cardBorder p-3 rounded-xl">
+                    <span class="text-[10px] text-gray-400 font-bold block uppercase">% Grasa</span>
+                    <span class="text-lg font-black text-amber-400" id="stat-grasa-actual">-- %</span>
+                </div>
+                <div class="bg-darkBg border border-cardBorder p-3 rounded-xl">
+                    <span class="text-[10px] text-gray-400 font-bold block uppercase">% M. Muscular</span>
+                    <span class="text-lg font-black text-brandGreen" id="stat-musculo-actual">-- %</span>
+                </div>
+            </div>
+
+            <div class="bg-darkBg border border-cardBorder p-4 rounded-xl h-64 relative">
+                <canvas id="chartProgreso"></canvas>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-cardBg border-t border-cardBorder py-6 px-6 text-center text-xs text-gray-500">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded bg-cardBorder border border-brandGreen/40 flex items-center justify-center text-brandGreen font-black text-[10px]">
+                    <i data-lucide="zap" class="w-3.5 h-3.5 fill-brandGreen text-brandGreen"></i>
+                </div>
+                <span class="font-extrabold text-white text-xs">ELITE FACTORY JL</span>
+            </div>
+            <p>© 2026 ELITE FACTORY JL. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL DE LOGIN -->
+    <div id="modal-login" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-cardBg border border-cardBorder w-full max-w-sm rounded-2xl p-6 relative shadow-2xl">
+            <button onclick="toggleModalLogin()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-xl bg-cardBorder border border-brandGreen/50 flex items-center justify-center font-black text-brandGreen text-xl mx-auto mb-2 shadow-md shadow-brandGreen/20">
+                    <i data-lucide="zap" class="w-6 h-6 fill-brandGreen text-brandGreen"></i>
+                </div>
+                <h3 class="text-lg font-black text-white uppercase">Acceso My Factory</h3>
+                <p class="text-xs text-gray-400">Ingresá tu usuario y contraseña</p>
+            </div>
+
+            <form onsubmit="iniciarSesion(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1 uppercase">Usuario</label>
+                    <input type="text" id="login-user" required placeholder="Ej. dueno, profe.javier, lazaro" class="w-full bg-darkBg border border-cardBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-brandGreen">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1 uppercase">Contraseña</label>
+                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full bg-darkBg border border-cardBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-brandGreen">
+                </div>
+
+                <div id="login-error" class="hidden text-xs text-textRed font-bold text-center bg-accentRed/30 p-2 rounded-lg border border-textRed/30">
+                    Usuario o contraseña incorrectos.
+                </div>
+
+                <button type="submit" class="w-full bg-brandGreen hover:bg-brandGreenHover text-black font-black py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-brandGreen/20">
+                    Ingresar al Sistema
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO ALUMNO -->
+    <div id="modal-nuevo-alumno" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-cardBg border border-cardBorder w-full max-w-md rounded-2xl p-6 relative">
+            <button onclick="toggleModalNuevoAlumno()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <h3 class="text-base font-black text-white uppercase mb-4 flex items-center gap-2">
+                <i data-lucide="user-plus" class="w-4 h-4 text-brandGreen"></i> Nuevo Alumno
+            </h3>
+
+            <form onsubmit="guardarNuevoAlumno(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Nombre Completo</label>
+                    <input type="text" id="alumno-nuevo-nombre" required class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Usuario</label>
+                        <input type="text" id="alumno-nuevo-user" required class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Contraseña</label>
+                        <input type="text" id="alumno-nuevo-pass" required value="1234" class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Fecha Nacimiento</label>
+                        <input type="date" id="alumno-nuevo-fnac" required class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Plan Membresía</label>
+                        <select id="alumno-nuevo-plan" class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                            <option value="Plan Esencial">Esencial ($25.000)</option>
+                            <option value="Plan Rendimiento">Rendimiento ($35.000)</option>
+                            <option value="Plan Élite VIP" selected>Élite VIP ($45.000)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Profesor Asignado</label>
+                    <select id="alumno-nuevo-profe" class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white font-bold">
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-brandGreen text-black font-black py-3 rounded-xl uppercase hover:bg-brandGreenHover transition mt-2">
+                    Registrar Alumno
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO PROFESOR -->
+    <div id="modal-nuevo-profesor" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-cardBg border border-cardBorder w-full max-w-md rounded-2xl p-6 relative">
+            <button onclick="toggleModalNuevoProfesor()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <h3 class="text-base font-black text-white uppercase mb-4 flex items-center gap-2">
+                <i data-lucide="user-check" class="w-4 h-4 text-brandGreen"></i> Sumar Profesor al Staff
+            </h3>
+
+            <form onsubmit="guardarNuevoProfesor(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Nombre Completo</label>
+                    <input type="text" id="profe-nuevo-nombre" required class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Especialidad</label>
+                    <input type="text" id="profe-nuevo-especialidad" placeholder="Ej. Biomecánica, Funcional" required class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Usuario</label>
+                        <input type="text" id="profe-nuevo-user" required class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Contraseña</label>
+                        <input type="text" id="profe-nuevo-pass" required value="1234" class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-brandGreen text-black font-black py-3 rounded-xl uppercase hover:bg-brandGreenHover transition mt-2">
+                    Registrar Profesor
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO EJERCICIO BANCO -->
+    <div id="modal-nuevo-ejercicio-banco" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-cardBg border border-cardBorder w-full max-w-md rounded-2xl p-6 relative">
+            <button onclick="toggleModalNuevoEjercicioBanco()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <h3 class="text-base font-black text-white uppercase mb-4 flex items-center gap-2">
+                <i data-lucide="plus-circle" class="w-4 h-4 text-brandGreen"></i> Agregar Ejercicio al Banco Oficial
+            </h3>
+
+            <form onsubmit="guardarEjercicioBanco(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Nombre del Ejercicio</label>
+                    <input type="text" id="banco-nuevo-nombre" required placeholder="Ej. Jalón al Pecho Agarre Neutro" class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Grupo Muscular</label>
+                        <select id="banco-nuevo-musculo" class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                            <option value="Pecho">Pecho</option>
+                            <option value="Espalda">Espalda</option>
+                            <option value="Hombros">Hombros</option>
+                            <option value="Piernas">Piernas</option>
+                            <option value="Brazos">Brazos</option>
+                            <option value="Abdomen">Abdomen</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Equipamiento</label>
+                        <select id="banco-nuevo-equipo" class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                            <option value="Poleas">Poleas</option>
+                            <option value="Barra">Barra</option>
+                            <option value="Mancuernas">Mancuernas</option>
+                            <option value="Máquina Guiada">Máquina Guiada</option>
+                            <option value="Peso Corporal">Peso Corporal</option>
+                            <option value="Banco">Banco</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Link de Demo / Video (Opcional)</label>
+                    <input type="url" id="banco-nuevo-demo" placeholder="https://..." class="w-full bg-darkBg border border-cardBorder rounded-lg p-2.5 text-white">
+                </div>
+
+                <button type="submit" class="w-full bg-brandGreen text-black font-black py-3 rounded-xl uppercase hover:bg-brandGreenHover transition mt-2">
+                    Guardar Ejercicio
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         LÓGICA JAVASCRIPT & ESTADO DEL SISTEMA
+         ========================================== -->
+    <script>
+        // --- ESTADO INICIAL / BASE DE DATOS LOCAL ---
+        const estadoInicial = {
+            usuarioActual: null,
+            profesores: [
+                { id: 1, nombre: "Prof. Javier López", especialidad: "Biomecánica & Hipertrofia", usuario: "profe.javier", pass: "1234" },
+                { id: 2, nombre: "Prof. Carla Gómez", especialidad: "Funcional & Cardio", usuario: "profe.carla", pass: "1234" }
+            ],
+            alumnos: [
+                {
+                    id: 1,
+                    nombre: "Lázaro Ángel Manuel",
+                    usuario: "lazaro",
+                    pass: "1234",
+                    fnac: "1998-05-14",
+                    plan: "Plan Élite VIP",
+                    profeId: 1,
+                    cuota: "Al día",
+                    objetivo: "Ganancia de masa muscular limpia y fuerza general",
+                    anotacion: "Molestia leve en hombro derecho al hacer press banca plano.",
+                    medidas: { peso: 82.5, altura: 178, grasa: 14.2, musculo: 44.1 },
+                    historicoMedidas: [
+                        { fecha: "2026-06-01", peso: 85.0, grasa: 16.5, musculo: 42.0 },
+                        { fecha: "2026-07-01", peso: 84.1, grasa: 15.8, musculo: 42.8 },
+                        { fecha: "2026-08-01", peso: 83.2, grasa: 15.0, musculo: 43.5 },
+                        { fecha: "2026-09-01", peso: 82.5, grasa: 14.2, musculo: 44.1 }
+                    ],
+                    prs: [
+                        { ejercicio: "Press Banca", peso: 110 },
+                        { ejercicio: "Sentadilla", peso: 145 },
+                        { ejercicio: "Peso Muerto", peso: 180 }
+                    ]
+                },
+                {
+                    id: 2,
+                    nombre: "Mariana Torres",
+                    usuario: "mariana",
+                    pass: "1234",
+                    fnac: "2002-11-20",
+                    plan: "Plan Rendimiento",
+                    profeId: 2,
+                    cuota: "Pendiente",
+                    objetivo: "Definición y resistencia muscular",
+                    anotacion: "Sin molestias.",
+                    medidas: { peso: 58.0, altura: 162, grasa: 20.1, musculo: 35.0 },
+                    historicoMedidas: [],
+                    prs: [{ ejercicio: "Hip Thrust", peso: 120 }]
+                }
+            ],
+            bancoEjercicios: [
+                { id: 1, nombre: "Press Banca Plano", musculo: "Pecho", equipo: "Barra", demo: "https://youtube.com" },
+                { id: 2, nombre: "Jalón al Pecho Prono", musculo: "Espalda", equipo: "Poleas", demo: "https://youtube.com" },
+                { id: 3, nombre: "Sentadilla Libre", musculo: "Piernas", equipo: "Barra", demo: "https://youtube.com" },
+                { id: 4, nombre: "Press Militar", musculo: "Hombros", equipo: "Mancuernas", demo: "https://youtube.com" },
+                { id: 5, nombre: "Curl de Bíceps", musculo: "Brazos", equipo: "Poleas", demo: "https://youtube.com" }
+            ],
+            rutinas: [
+                {
+                    alumnoId: 1,
+                    fecha: "2026-09-29",
+                    enfoque: "Pecho & Tríceps (Hipertrofia)",
+                    ejercicios: [
+                        { nombre: "Press Banca Plano", seriesReps: "4x8-10", obs: "Pausa de 1 seg abajo", completado: false },
+                        { nombre: "Press Inclinado con Mancuernas", seriesReps: "3x10-12", obs: "Controlar bajada", completado: false },
+                        { nombre: "Aperturas en Polea Alta", seriesReps: "3x15", obs: "Apriete máximo", completado: false },
+                        { nombre: "Extensiones de Tríceps Polea", seriesReps: "4x12", obs: "Codos pegados al cuerpo", completado: false }
+                    ]
+                }
+            ],
+            finanzas: [
+                { id: 1, tipo: "ingreso", monto: 45000, concepto: "Cuota Élite VIP - Lázaro" },
+                { id: 2, tipo: "gasto", monto: 12000, concepto: "Mantenimiento Polea Doble" }
+            ],
+            inventario: [
+                "Mancuernas 10kg a 40kg (Completo)",
+                "2x Barras Olímpicas 20kg",
+                "Piso de goma de alto impacto",
+                "Césped sintético verde central"
+            ]
+        };
+
+        // Cargar o inicializar estado local
+        let DB = JSON.parse(localStorage.getItem("ELITE_FACTORY_DB")) || estadoInicial;
+
+        function guardarDB() {
+            localStorage.setItem("ELITE_FACTORY_DB", JSON.stringify(DB));
+        }
+
+        // --- SISTEMA DE NAVEGACIÓN Y VISTAS ---
+        function switchView(vista) {
+            document.getElementById('panel-publica').classList.add('hidden');
+            document.getElementById('panel-dueno').classList.add('hidden');
+            document.getElementById('panel-profesor').classList.add('hidden');
+            document.getElementById('panel-alumno').classList.add('hidden');
+
+            if (vista === 'publica') {
+                document.getElementById('panel-publica').classList.remove('hidden');
+                renderizarLanding();
+            } else if (vista === 'dueno') {
+                document.getElementById('panel-dueno').classList.remove('hidden');
+                renderizarPanelDueno();
+            } else if (vista === 'profesor') {
+                document.getElementById('panel-profesor').classList.remove('hidden');
+                renderizarPanelProfesor();
+            } else if (vista === 'alumno') {
+                document.getElementById('panel-alumno').classList.remove('hidden');
+                renderizarPanelAlumno();
+            }
+
+            if (window.lucide) lucide.createIcons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        function toggleModalLogin() {
+            document.getElementById('modal-login').classList.toggle('hidden');
+            document.getElementById('login-error').classList.add('hidden');
+        }
+
+        // --- AUTENTICACIÓN ---
+        function iniciarSesion(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-user').value.trim();
+            const p = document.getElementById('login-pass').value.trim();
+
+            if (u === 'dueno' && p === '1234') {
+                DB.usuarioActual = { rol: 'dueno', nombre: 'Dueño Administrador' };
+                guardarDB();
+                actualizarHeaderUsuario();
+                toggleModalLogin();
+                switchView('dueno');
+                return;
+            }
+
+            const profe = DB.profesores.find(x => x.usuario === u && x.pass === p);
+            if (profe) {
+                DB.usuarioActual = { rol: 'profesor', id: profe.id, nombre: profe.nombre };
+                guardarDB();
+                actualizarHeaderUsuario();
+                toggleModalLogin();
+                switchView('profesor');
+                return;
+            }
+
+            const alumno = DB.alumnos.find(x => x.usuario === u && x.pass === p);
+            if (alumno) {
+                DB.usuarioActual = { rol: 'alumno', id: alumno.id, nombre: alumno.nombre };
+                guardarDB();
+                actualizarHeaderUsuario();
+                toggleModalLogin();
+                switchView('alumno');
+                return;
+            }
+
+            document.getElementById('login-error').classList.remove('hidden');
+        }
+
+        function cerrarSesion() {
+            DB.usuarioActual = null;
+            guardarDB();
+            actualizarHeaderUsuario();
+            switchView('publica');
+        }
+
+        function actualizarHeaderUsuario() {
+            const badge = document.getElementById('user-badge');
+            const label = document.getElementById('user-role-label');
+            const btnIngresar = document.getElementById('btn-ingresar');
+
+            if (DB.usuarioActual) {
+                badge.classList.remove('hidden');
+                badge.classList.add('flex');
+                btnIngresar.classList.add('hidden');
+                label.textContent = DB.usuarioActual.nombre;
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('flex');
+                btnIngresar.classList.remove('hidden');
+            }
+        }
+
+        // --- RENDER LANDING PÚBLICA ---
+        function renderizarLanding() {
+            const container = document.getElementById('landing-profesores-container');
+            container.innerHTML = DB.profesores.map(p => `
+                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-brandGreen/10 border border-brandGreen/30 flex items-center justify-center text-brandGreen font-black text-lg">
+                        ${p.nombre.split(' ').map(n=>n[0]).join('')}
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-white text-base">${p.nombre}</h4>
+                        <p class="text-xs text-brandGreen font-semibold">${p.especialidad}</p>
+                        <p class="text-[11px] text-gray-400 mt-1">Staff Oficial Elite Factory JL</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- PANEL DEL DUEÑO ---
+        function renderizarPanelDueno() {
+            // Métricas
+            document.getElementById('stat-totales').textContent = DB.alumnos.length;
+            document.getElementById('stat-aldia').textContent = DB.alumnos.filter(a => a.cuota === 'Al día').length;
+            document.getElementById('stat-pendientes').textContent = DB.alumnos.filter(a => a.cuota === 'Pendiente').length;
+            document.getElementById('stat-morosos').textContent = DB.alumnos.filter(a => a.cuota === 'Vencida').length;
+
+            renderizarBancoEjercicios();
+            renderizarFinanzas();
+            renderizarTablaAlumnosDueno();
+            renderizarProfesoresDueno();
+            renderizarInventario();
+        }
+
+        function renderizarBancoEjercicios() {
+            const musculo = document.getElementById('filtro-banco-musculo').value;
+            const maquina = document.getElementById('filtro-banco-maquina').value;
+            const nombre = document.getElementById('filtro-banco-nombre').value.toLowerCase();
+
+            const filtrados = DB.bancoEjercicios.filter(e => {
+                const matchM = musculo === 'todos' || e.musculo === musculo;
+                const matchEq = maquina === 'todos' || e.equipo === maquina;
+                const matchN = e.nombre.toLowerCase().includes(nombre);
+                return matchM && matchEq && matchN;
+            });
+
+            const tbody = document.getElementById('tabla-banco-ejercicios-body');
+            tbody.innerHTML = filtrados.map((e, idx) => `
+                <tr class="hover:bg-darkBg/50">
+                    <td class="py-2.5 font-bold text-white">${e.nombre}</td>
+                    <td class="py-2.5 text-brandGreen font-semibold">${e.musculo}</td>
+                    <td class="py-2.5">${e.equipo}</td>
+                    <td class="py-2.5">${e.demo ? `<a href="${e.demo}" target="_blank" class="text-blue-400 hover:underline">Ver Demo</a>` : '--'}</td>
+                    <td class="py-2.5 text-right">
+                        <button onclick="eliminarEjercicioBanco(${e.id})" class="text-textRed hover:text-red-300">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function eliminarEjercicioBanco(id) {
+            DB.bancoEjercicios = DB.bancoEjercicios.filter(x => x.id !== id);
+            guardarDB();
+            renderizarBancoEjercicios();
+        }
+
+        function toggleModalNuevoEjercicioBanco() {
+            document.getElementById('modal-nuevo-ejercicio-banco').classList.toggle('hidden');
+        }
+
+        function guardarEjercicioBanco(e) {
+            e.preventDefault();
+            const nuevo = {
+                id: Date.now(),
+                nombre: document.getElementById('banco-nuevo-nombre').value,
+                musculo: document.getElementById('banco-nuevo-musculo').value,
+                equipo: document.getElementById('banco-nuevo-equipo').value,
+                demo: document.getElementById('banco-nuevo-demo').value
+            };
+            DB.bancoEjercicios.push(nuevo);
+            guardarDB();
+            toggleModalNuevoEjercicioBanco();
+            renderizarBancoEjercicios();
+        }
+
+        function renderizarFinanzas() {
+            const total = DB.finanzas.reduce((acc, f) => f.tipo === 'ingreso' ? acc + f.monto : acc - f.monto, 0);
+            document.getElementById('caja-total-balance').textContent = `Total en Caja: $ ${total.toLocaleString()}`;
+
+            const lista = document.getElementById('lista-movimientos-finanzas');
+            lista.innerHTML = DB.finanzas.slice().reverse().map(f => `
+                <div class="flex justify-between items-center bg-cardBg p-2 rounded border border-cardBorder">
+                    <span class="text-gray-300">${f.concepto}</span>
+                    <span class="${f.tipo === 'ingreso' ? 'text-brandGreen' : 'text-textRed'} font-black">
+                        ${f.tipo === 'ingreso' ? '+' : '-'} $${f.monto.toLocaleString()}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function registrarTransaccionFinanciera(e) {
+            e.preventDefault();
+            const f = {
+                id: Date.now(),
+                tipo: document.getElementById('finanza-tipo').value,
+                monto: parseFloat(document.getElementById('finanza-monto').value),
+                concepto: document.getElementById('finanza-concepto').value
+            };
+            DB.finanzas.push(f);
+            guardarDB();
+            renderizarFinanzas();
+            e.target.reset();
+        }
+
+        function calcularEdad(fnac) {
+            if (!fnac) return 25;
+            const hoy = new Date();
+            const nac = new Date(fnac);
+            let edad = hoy.getFullYear() - nac.getFullYear();
+            const m = hoy.getMonth() - nac.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+            return edad;
+        }
+
+        function renderizarTablaAlumnosDueno() {
+            const orden = document.getElementById('filtro-orden-dueno').value;
+            const cuota = document.getElementById('filtro-cuota-dueno').value;
+            const edadF = document.getElementById('filtro-edad-dueno').value;
+            const mesF = document.getElementById('filtro-mes-dueno').value;
+
+            let lista = [...DB.alumnos];
+
+            // Filtros
+            if (cuota !== 'todos') lista = lista.filter(a => a.cuota === cuota);
+            if (edadF !== 'todos') {
+                lista = lista.filter(a => {
+                    const e = calcularEdad(a.fnac);
+                    if (edadF === 'sub20') return e < 20;
+                    if (edadF === '20_30') return e >= 20 && e <= 30;
+                    if (edadF === 'mas30') return e > 30;
+                    return true;
+                });
+            }
+            if (mesF !== 'todos') {
+                lista = lista.filter(a => {
+                    if (!a.fnac) return false;
+                    const mes = new Date(a.fnac).getMonth() + 1;
+                    return mes === parseInt(mesF);
+                });
+            }
+
+            // Orden
+            lista.sort((a,b) => orden === 'az' ? a.nombre.localeCompare(b.nombre) : b.nombre.localeCompare(a.nombre));
+
+            const tbody = document.getElementById('tabla-alumnos-body-dueno');
+            tbody.innerHTML = lista.map(a => {
+                const profe = DB.profesores.find(p => p.id === a.profeId);
+                const colorCuota = a.cuota === 'Al día' ? 'text-brandGreen' : (a.cuota === 'Pendiente' ? 'text-amber-400' : 'text-textRed');
+                return `
+                    <tr class="hover:bg-darkBg/50">
+                        <td class="py-2 font-bold text-white">${a.nombre} <br><span class="text-[10px] text-gray-500 font-normal">${a.plan}</span></td>
+                        <td class="py-2">${a.usuario} / <span class="text-gray-500">${a.pass}</span></td>
+                        <td class="py-2">${a.fnac || '--'} (${calcularEdad(a.fnac)} a)</td>
+                        <td class="py-2 text-gray-300">${profe ? profe.nombre : 'Sin Asignar'}</td>
+                        <td class="py-2 font-extrabold ${colorCuota}">${a.cuota}</td>
+                        <td class="py-2 text-right">
+                            <button onclick="eliminarAlumno(${a.id})" class="text-textRed hover:text-red-300">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function eliminarAlumno(id) {
+            if (confirm("¿Estás seguro de dar de baja a este alumno?")) {
+                DB.alumnos = DB.alumnos.filter(a => a.id !== id);
+                guardarDB();
+                renderizarPanelDueno();
+            }
+        }
+
+        // --- FUNCIONALIDAD REQUERIDA: DAR DE BAJA A PROFESORES ---
+        function renderizarProfesoresDueno() {
+            const container = document.getElementById('lista-profesores-dueno');
+            container.innerHTML = DB.profesores.map(p => `
+                <div class="flex justify-between items-center bg-darkBg p-3 rounded-xl border border-cardBorder">
+                    <div>
+                        <span class="font-bold text-white text-xs block">${p.nombre}</span>
+                        <span class="text-[10px] text-brandGreen block">${p.especialidad}</span>
+                        <span class="text-[10px] text-gray-500">Usuario: ${p.usuario} | Pass: ${p.pass}</span>
+                    </div>
+                    <button onclick="eliminarProfesor(${p.id})" title="Dar de baja profesor" class="p-2 bg-accentRed/40 border border-textRed/40 text-textRed hover:bg-textRed hover:text-black rounded-lg transition">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function eliminarProfesor(id) {
+            const profe = DB.profesores.find(p => p.id === id);
+            if (!profe) return;
+
+            if (confirm(`¿Estás seguro de dar de baja al ${profe.nombre}?`)) {
+                // Eliminar profesor del estado
+                DB.profesores = DB.profesores.filter(p => p.id !== id);
+                
+                // Desasignar profesor de sus alumnos vinculados
+                DB.alumnos.forEach(a => {
+                    if (a.profeId === id) a.profeId = null;
+                });
+
+                guardarDB();
+                renderizarPanelDueno();
+                alert(`El profesor ${profe.nombre} ha sido dado de baja correctamente.`);
+            }
+        }
+
+        function toggleModalNuevoProfesor() {
+            document.getElementById('modal-nuevo-profesor').classList.toggle('hidden');
+        }
+
+        function guardarNuevoProfesor(e) {
+            e.preventDefault();
+            const nuevo = {
+                id: Date.now(),
+                nombre: document.getElementById('profe-nuevo-nombre').value,
+                especialidad: document.getElementById('profe-nuevo-especialidad').value,
+                usuario: document.getElementById('profe-nuevo-user').value,
+                pass: document.getElementById('profe-nuevo-pass').value
+            };
+            DB.profesores.push(nuevo);
+            guardarDB();
+            toggleModalNuevoProfesor();
+            renderizarPanelDueno();
+        }
+
+        function toggleModalNuevoAlumno() {
+            const modal = document.getElementById('modal-nuevo-alumno');
+            modal.classList.toggle('hidden');
+
+            const selectProfe = document.getElementById('alumno-nuevo-profe');
+            selectProfe.innerHTML = DB.profesores.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+        }
+
+        function guardarNuevoAlumno(e) {
+            e.preventDefault();
+            const nuevo = {
+                id: Date.now(),
+                nombre: document.getElementById('alumno-nuevo-nombre').value,
+                usuario: document.getElementById('alumno-nuevo-user').value,
+                pass: document.getElementById('alumno-nuevo-pass').value,
+                fnac: document.getElementById('alumno-nuevo-fnac').value,
+                plan: document.getElementById('alumno-nuevo-plan').value,
+                profeId: parseInt(document.getElementById('alumno-nuevo-profe').value),
+                cuota: 'Al día',
+                objetivo: 'Mejora de salud y rendimiento',
+                anotacion: 'Sin molestias.',
+                medidas: { peso: 70, altura: 170, grasa: 18, musculo: 38 },
+                historicoMedidas: [],
+                prs: []
+            };
+            DB.alumnos.push(nuevo);
+            guardarDB();
+            toggleModalNuevoAlumno();
+            if (DB.usuarioActual && DB.usuarioActual.rol === 'dueno') renderizarPanelDueno();
+            if (DB.usuarioActual && DB.usuarioActual.rol === 'profesor') renderizarPanelProfesor();
+        }
+
+        function renderizarInventario() {
+            const container = document.getElementById('lista-inventario');
+            container.innerHTML = DB.inventario.map((item, idx) => `
+                <div class="flex justify-between items-center bg-darkBg p-2 rounded border border-cardBorder">
+                    <span class="text-gray-300 text-xs">${item}</span>
+                    <button onclick="eliminarInventario(${idx})" class="text-textRed hover:text-red-300">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            `).join('');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function agregarInventario(e) {
+            e.preventDefault();
+            const inp = document.getElementById('inventario-item');
+            if (inp.value.trim()) {
+                DB.inventario.push(inp.value.trim());
+                guardarDB();
+                renderizarInventario();
+                inp.value = '';
+            }
+        }
+
+        function eliminarInventario(idx) {
+            DB.inventario.splice(idx, 1);
+            guardarDB();
+            renderizarInventario();
+        }
+
+        // --- PANEL DEL PROFESOR ---
+        let ejerciciosTempRutina = [];
+
+        function renderizarPanelProfesor() {
+            const profeId = DB.usuarioActual.id;
+            const profe = DB.profesores.find(p => p.id === profeId) || DB.profesores[0];
+
+            document.getElementById('profe-nombre-display').textContent = profe.nombre;
+            document.getElementById('profe-especialidad-display').textContent = profe.especialidad;
+            document.getElementById('profe-avatar-iniciales').textContent = profe.nombre.split(' ').map(n=>n[0]).join('');
+
+            filtrarAlumnosProfesor();
+            cargarSelectsAlumnosProfesor();
+            actualizarSelectEjerciciosArmador();
+        }
+
+        function cargarSelectsAlumnosProfesor() {
+            const profeId = DB.usuarioActual.id;
+            const misAlumnos = DB.alumnos.filter(a => a.profeId === profeId);
+
+            const selAnotacion = document.getElementById('anotacion-alumno-select');
+            const selRutina = document.getElementById('rutina-alumno-select');
+
+            const options = misAlumnos.map(a => `<option value="${a.id}">${a.nombre}</option>`).join('');
+            selAnotacion.innerHTML = options || '<option value="">Sin alumnos asignados</option>';
+            selRutina.innerHTML = options || '<option value="">Sin alumnos asignados</option>';
+
+            if (misAlumnos.length > 0) cargarFichaAlumnoProfe();
+        }
+
+        function filtrarAlumnosProfesor() {
+            const profeId = DB.usuarioActual.id;
+            const orden = document.getElementById('filtro-orden-profe').value;
+            const cuota = document.getElementById('filtro-cuota-profe').value;
+            const edadF = document.getElementById('filtro-edad-profe').value;
+            const mesF = document.getElementById('filtro-mes-profe').value;
+
+            let lista = DB.alumnos.filter(a => a.profeId === profeId);
+
+            if (cuota !== 'todos') lista = lista.filter(a => a.cuota === cuota);
+            if (edadF !== 'todos') {
+                lista = lista.filter(a => {
+                    const e = calcularEdad(a.fnac);
+                    if (edadF === 'sub20') return e < 20;
+                    if (edadF === '20_30') return e >= 20 && e <= 30;
+                    if (edadF === 'mas30') return e > 30;
+                    return true;
+                });
+            }
+            if (mesF !== 'todos') {
+                lista = lista.filter(a => {
+                    if (!a.fnac) return false;
+                    const mes = new Date(a.fnac).getMonth() + 1;
+                    return mes === parseInt(mesF);
+                });
+            }
+
+            lista.sort((a,b) => orden === 'az' ? a.nombre.localeCompare(b.nombre) : b.nombre.localeCompare(a.nombre));
+
+            const container = document.getElementById('alumnos-profesor-container');
+            if (lista.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-500 col-span-2 text-center py-4">No se encontraron alumnos con los filtros seleccionados.</p>`;
+                return;
+            }
+
+            container.innerHTML = lista.map(a => `
+                <div class="bg-darkBg border border-cardBorder p-4 rounded-xl flex justify-between items-center">
+                    <div>
+                        <h4 class="font-extrabold text-white text-sm">${a.nombre}</h4>
+                        <p class="text-[11px] text-gray-400">${a.plan} | ${calcularEdad(a.fnac)} años</p>
+                        <span class="text-[10px] font-bold ${a.cuota === 'Al día' ? 'text-brandGreen' : 'text-amber-400'} uppercase block mt-1">Cuota: ${a.cuota}</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-black text-white block">${a.medidas?.peso || '--'} kg</span>
+                        <span class="text-[10px] text-gray-400 block">${a.medidas?.grasa || '--'}% grasa</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function cargarFichaAlumnoProfe() {
+            const id = parseInt(document.getElementById('anotacion-alumno-select').value);
+            const alumno = DB.alumnos.find(a => a.id === id);
+            if (!alumno) return;
+
+            document.getElementById('ficha-objetivo').value = alumno.objetivo || '';
+            document.getElementById('ficha-estado-cuota').textContent = alumno.cuota;
+            document.getElementById('profe-input-peso').value = alumno.medidas?.peso || '';
+            document.getElementById('profe-input-altura').value = alumno.medidas?.altura || '';
+            document.getElementById('profe-input-grasa').value = alumno.medidas?.grasa || '';
+            document.getElementById('profe-input-musculo').value = alumno.medidas?.musculo || '';
+            document.getElementById('ficha-anotacion').value = alumno.anotacion || '';
+        }
+
+        function guardarAnotacionYMedidasProfe(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('anotacion-alumno-select').value);
+            const alumno = DB.alumnos.find(a => a.id === id);
+            if (!alumno) return;
+
+            alumno.objetivo = document.getElementById('ficha-objetivo').value;
+            alumno.anotacion = document.getElementById('ficha-anotacion').value;
+            
+            const p = parseFloat(document.getElementById('profe-input-peso').value) || alumno.medidas.peso;
+            const alt = parseFloat(document.getElementById('profe-input-altura').value) || alumno.medidas.altura;
+            const g = parseFloat(document.getElementById('profe-input-grasa').value) || alumno.medidas.grasa;
+            const m = parseFloat(document.getElementById('profe-input-musculo').value) || alumno.medidas.musculo;
+
+            alumno.medidas = { peso: p, altura: alt, grasa: g, musculo: m };
+            alumno.historicoMedidas.push({
+                fecha: new Date().toISOString().split('T')[0],
+                peso: p,
+                grasa: g,
+                musculo: m
+            });
+
+            guardarDB();
+            alert("Ficha y mediciones guardadas correctamente.");
+        }
+
+        function actualizarSelectEjerciciosArmador() {
+            const m = document.getElementById('select-filtro-musculo-armador').value;
+            const sel = document.getElementById('select-ejercicio-banco');
+
+            const filtrados = m === 'todos' ? DB.bancoEjercicios : DB.bancoEjercicios.filter(x => x.musculo === m);
+            sel.innerHTML = filtrados.map(e => `<option value="${e.nombre}">${e.nombre} (${e.equipo})</option>`).join('');
+        }
+
+        function agregarEjercicioAListaTemp() {
+            const custom = document.getElementById('input-ejercicio-custom').value.trim();
+            const banco = document.getElementById('select-ejercicio-banco').value;
+            const nombre = custom || banco;
+            const seriesReps = document.getElementById('input-series-reps').value.trim() || '4x10';
+            const obs = document.getElementById('input-obs-ejercicio').value.trim() || 'Sin observaciones';
+
+            if (!nombre) return;
+
+            ejerciciosTempRutina.push({ nombre, seriesReps, obs, completado: false });
+            
+            document.getElementById('input-ejercicio-custom').value = '';
+            document.getElementById('input-series-reps').value = '';
+            document.getElementById('input-obs-ejercicio').value = '';
+
+            renderizarEjerciciosTemp();
+        }
+
+        function renderizarEjerciciosTemp() {
+            const container = document.getElementById('lista-ejercicios-temporales');
+            if (ejerciciosTempRutina.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-500 text-center py-2" id="msg-sin-ejercicios">Sin ejercicios añadidos aún.</p>`;
+                return;
+            }
+
+            container.innerHTML = ejerciciosTempRutina.map((e, idx) => `
+                <div class="flex justify-between items-center bg-darkBg p-2 rounded border border-cardBorder text-xs">
+                    <div>
+                        <span class="font-bold text-white block">${e.nombre}</span>
+                        <span class="text-brandGreen text-[10px]">${e.seriesReps} — ${e.obs}</span>
+                    </div>
+                    <button type="button" onclick="eliminarEjercicioTemp(${idx})" class="text-textRed">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function eliminarEjercicioTemp(idx) {
+            ejerciciosTempRutina.splice(idx, 1);
+            renderizarEjerciciosTemp();
+        }
+
+        function guardarRutinaProfe(e) {
+            e.preventDefault();
+            const alumnoId = parseInt(document.getElementById('rutina-alumno-select').value);
+            const fecha = document.getElementById('rutina-fecha-input').value;
+            const enfoque = document.getElementById('rutina-enfoque').value;
+
+            if (ejerciciosTempRutina.length === 0) {
+                alert("Debes agregar al menos un ejercicio a la sesión.");
+                return;
+            }
+
+            const nuevaRutina = {
+                alumnoId,
+                fecha,
+                enfoque,
+                ejercicios: [...ejerciciosTempRutina]
+            };
+
+            // Reemplazar si ya existe o agregar
+            const idxExistente = DB.rutinas.findIndex(r => r.alumnoId === alumnoId && r.fecha === fecha);
+            if (idxExistente >= 0) {
+                DB.rutinas[idxExistente] = nuevaRutina;
+            } else {
+                DB.rutinas.push(nuevaRutina);
+            }
+
+            guardarDB();
+            ejerciciosTempRutina = [];
+            renderizarEjerciciosTemp();
+            e.target.reset();
+            alert("¡Rutina publicada con éxito para el alumno!");
+        }
+
+        // --- PANEL DEL ALUMNO ---
+        let miChart = null;
+
+        function renderizarPanelAlumno() {
+            const alumnoId = DB.usuarioActual.id;
+            const alumno = DB.alumnos.find(a => a.id === alumnoId) || DB.alumnos[0];
+            const profe = DB.profesores.find(p => p.id === alumno.profeId);
+
+            document.getElementById('alumno-nombre-display').textContent = alumno.nombre;
+            document.getElementById('alumno-avatar').textContent = alumno.nombre.split(' ').map(n=>n[0]).join('');
+            document.getElementById('alumno-edad-display').textContent = `${calcularEdad(alumno.fnac)} años`;
+            document.getElementById('alumno-plan-display').textContent = alumno.plan;
+            document.getElementById('alumno-profe-display').textContent = profe ? profe.nombre : 'Sin Asignar';
+
+            // Estado de cuota
+            const badgeCont = document.getElementById('alumno-estado-badge-contenedor');
+            badgeCont.innerHTML = `
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-black uppercase ${alumno.cuota === 'Al día' ? 'bg-brandGreen/20 text-brandGreen border border-brandGreen/40' : 'bg-red-500/20 text-red-400 border border-red-500/40'}">
+                    ${alumno.cuota}
+                </span>
+            `;
+
+            document.getElementById('alumno-nota-medica').textContent = alumno.anotacion || 'Sin observaciones médicas.';
+
+            // Rutinas selector de fecha
+            const misRutinas = DB.rutinas.filter(r => r.alumnoId === alumnoId);
+            const selFecha = document.getElementById('select-fecha-rutina-alumno');
+
+            if (misRutinas.length === 0) {
+                selFecha.innerHTML = `<option value="">Sin rutinas asignadas</option>`;
+                document.getElementById('contenedor-rutina-fecha-seleccionada').innerHTML = `<p class="text-xs text-gray-500 text-center py-4">No tenés rutinas asignadas aún. Tu profesor la cargará pronto.</p>`;
+            } else {
+                selFecha.innerHTML = misRutinas.map(r => `<option value="${r.fecha}">${r.fecha} — ${r.enfoque}</option>`).join('');
+                cambiarFechaRutinaAlumno();
+            }
+
+            // PRs
+            renderizarPRsAlumno(alumno);
+
+            // Estadísticas corporales
+            document.getElementById('stat-peso-actual').textContent = `${alumno.medidas?.peso || '--'} kg`;
+            document.getElementById('stat-altura-actual').textContent = `${alumno.medidas?.altura || '--'} cm`;
+            document.getElementById('stat-grasa-actual').textContent = `${alumno.medidas?.grasa || '--'} %`;
+            document.getElementById('stat-musculo-actual').textContent = `${alumno.medidas?.musculo || '--'} %`;
+
+            initChart(alumno);
+        }
+
+        // --- FUNCIONALIDAD REQUERIDA: CHECKBOX DE EJERCICIOS PARA EL ALUMNO ---
+        function cambiarFechaRutinaAlumno() {
+            const alumnoId = DB.usuarioActual.id;
+            const fechaSel = document.getElementById('select-fecha-rutina-alumno').value;
+            const rutina = DB.rutinas.find(r => r.alumnoId === alumnoId && r.fecha === fechaSel);
+            const container = document.getElementById('contenedor-rutina-fecha-seleccionada');
+
+            if (!rutina) {
+                container.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Sin rutina para esta fecha.</p>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="bg-darkBg border border-cardBorder p-4 rounded-xl space-y-3">
+                    <div class="flex justify-between items-center border-b border-cardBorder pb-2">
+                        <span class="text-xs font-black text-brandGreen uppercase">${rutina.enfoque}</span>
+                        <span class="text-[10px] text-gray-400 font-bold">${rutina.ejercicios.filter(e => e.completado).length} / ${rutina.ejercicios.length} Completados</span>
+                    </div>
+                    <div class="space-y-2">
+                        ${rutina.ejercicios.map((ej, index) => `
+                            <div class="flex items-center gap-3 p-3 rounded-xl border transition ${ej.completado ? 'bg-brandGreen/5 border-brandGreen/30 text-gray-400' : 'bg-cardBg border-cardBorder text-white'}">
+                                <input type="checkbox" 
+                                       ${ej.completado ? 'checked' : ''} 
+                                       onchange="toggleCheckEjercicio('${rutina.fecha}',${index})"
+                                       class="w-5 h-5 accent-[#00FF66] bg-darkBg border-cardBorder rounded cursor-pointer shrink-0">
+                                <div class="flex-1">
+                                    <h5 class="text-xs font-extrabold ${ej.completado ? 'line-through text-gray-400' : 'text-white'}">${ej.nombre}</h5>
+                                    <p class="text-[11px] ${ej.completado ? 'text-gray-500' : 'text-brandGreen'} font-semibold">${ej.seriesReps}</p>
+                                    <p class="text-[10px] text-gray-400">${ej.obs}</p>
+                                </div>
+                                ${ej.completado ? '<i data-lucide="check-circle-2" class="w-5 h-5 text-brandGreen shrink-0"></i>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function toggleCheckEjercicio(fecha, ejercIndex) {
+            const alumnoId = DB.usuarioActual.id;
+            const rutina = DB.rutinas.find(r => r.alumnoId === alumnoId && r.fecha === fecha);
+            if (!rutina || !rutina.ejercicios[ejercIndex]) return;
+
+            // Invertir estado de completado
+            rutina.ejercicios[ejercIndex].completado = !rutina.ejercicios[ejercIndex].completado;
+            guardarDB();
+            cambiarFechaRutinaAlumno();
+        }
+
+        function renderizarPRsAlumno(alumno) {
+            const container = document.getElementById('prs-alumnos-container');
+            if (!alumno.prs || alumno.prs.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-500 col-span-4 text-center py-2">Aún no registraste récords personales.</p>`;
+                return;
+            }
+
+            container.innerHTML = alumno.prs.map(p => `
+                <div class="bg-darkBg border border-cardBorder p-3 rounded-xl text-center">
+                    <span class="text-[10px] text-gray-400 font-bold block uppercase truncate">${p.ejercicio}</span>
+                    <span class="text-xl font-black text-amber-400">${p.peso} kg</span>
+                </div>
+            `).join('');
+        }
+
+        function guardarNuevoPR(e) {
+            e.preventDefault();
+            const alumnoId = DB.usuarioActual.id;
+            const alumno = DB.alumnos.find(a => a.id === alumnoId);
+            if (!alumno) return;
+
+            const ej = document.getElementById('pr-ejercicio').value;
+            const peso = parseFloat(document.getElementById('pr-peso').value);
+
+            const idxExistente = alumno.prs.findIndex(p => p.ejercicio.toLowerCase() === ej.toLowerCase());
+            if (idxExistente >= 0) {
+                alumno.prs[idxExistente].peso = peso;
+            } else {
+                alumno.prs.push({ ejercicio: ej, peso });
+            }
+
+            guardarDB();
+            renderizarPRsAlumno(alumno);
+            e.target.reset();
+        }
+
+        function generarRecetaSaludable() {
+            const obj = document.getElementById('receta-objetivo').value;
+            const mom = document.getElementById('receta-momento').value;
+            const res = document.getElementById('resultado-receta');
+
+            let titulo = "", desc = "", macros = "";
+
+            if (obj === 'ganar' && mom === 'desayuno') {
+                titulo = "Omelette de Avena, Claras y Banana con Mantequilla de Maní";
+                desc = "Mezclá 4 claras, 1 huevo entero, 60g de avena molida y 1 banana pisada. Cociná a la sartén y untá con mantequilla de maní.";
+                macros = "Proteínas: 35g | Carbohidratos: 65g | Grasas: 16g | 540 kcal";
+            } else if (obj === 'perder' && mom === 'almuerzo') {
+                titulo = "Pechuga Grillada con Ensalada Verde y Quinoa";
+                desc = "200g de pechuga de pollo a la plancha con especias, 80g de quinoa cocida y ensalada de espinaca, pepino y tomate con limón.";
+                macros = "Proteínas: 45g | Carbohidratos: 25g | Grasas: 8g | 350 kcal";
+            } else {
+                titulo = "Bowl Proteico Élite de Yogur Griego y Frutos Rojos";
+                desc = "250g de yogur griego natural, 1 scoop de proteína de suero, frutos rojos mixtos y un puñado de almendras activadas.";
+                macros = "Proteínas: 40g | Carbohidratos: 30g | Grasas: 12g | 390 kcal";
+            }
+
+            res.innerHTML = `
+                <h4 class="font-black text-brandGreen uppercase text-sm">${titulo}</h4>
+                <p class="text-gray-300 leading-relaxed">${desc}</p>
+                <span class="inline-block bg-brandGreen/10 border border-brandGreen/30 text-brandGreen font-extrabold px-2.5 py-1 rounded text-[11px] mt-1">${macros}</span>
+            `;
+            res.classList.remove('hidden');
+        }
+
+        function initChart(alumno) {
+            const ctx = document.getElementById('chartProgreso').getContext('2d');
+            
+            if (miChart) miChart.destroy();
+
+            const hist = alumno.historicoMedidas || [];
+            const labels = hist.length > 0 ? hist.map(h => h.fecha) : ['Mes 1', 'Mes 2', 'Mes 3', 'Actual'];
+            const datosPeso = hist.length > 0 ? hist.map(h => h.peso) : [85, 84, 83, alumno.medidas?.peso || 82];
+            const datosGrasa = hist.length > 0 ? hist.map(h => h.grasa) : [16.5, 15.8, 15.0, alumno.medidas?.grasa || 14];
+
+            miChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Peso Corporal (kg)',
+                            data: datosPeso,
+                            borderColor: '#00FF66',
+                            backgroundColor: 'rgba(0, 255, 102, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: '% Grasa Corporal',
+                            data: datosGrasa,
+                            borderColor: '#F59E0B',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#9CA3AF', font: { weight: 'bold', size: 11 } } }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#6B7280' }, grid: { color: '#1C2029' } },
+                        y: { ticks: { color: '#6B7280' }, grid: { color: '#1C2029' } }
+                    }
+                }
+            });
+        }
+
+        // --- INICIALIZACIÓN GENERAL ---
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarHeaderUsuario();
+            
+            if (DB.usuarioActual) {
+                switchView(DB.usuarioActual.rol);
+            } else {
+                switchView('publica');
+            }
+        });
+    </script>
+</body>
+</html>
